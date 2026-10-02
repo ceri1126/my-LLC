@@ -1,22 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" fill="none">
   <defs>
     <!-- Stress distribution gradients -->
-    <!-- Nominal / Safe Stress Gradient (Blue/Cyan/Greenish) -->
-    <linearGradient id="stressGradNominal" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0284C7" stop-opacity="0.35"/>
-      <stop offset="50%" stop-color="#0EA5E9" stop-opacity="0.45"/>
+    <!-- Nominal / Safe Stress Gradient (Blue/Cyan - root is nominal) -->
+    <linearGradient id="stressGradNominal" x1="70%" y1="0%" x2="20%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#0EA5E9" stop-opacity="0.4"/>
       <stop offset="85%" stop-color="#38BDF8" stop-opacity="0.5"/>
       <stop offset="100%" stop-color="#34D399" stop-opacity="0.55"/>
     </linearGradient>
 
-    <!-- Peak Von Mises Stress Gradient (Cyan -> Yellow -> High Alert Red) -->
-    <linearGradient id="stressGradPeak" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0284C7" stop-opacity="0.4"/>
-      <stop offset="35%" stop-color="#0EA5E9" stop-opacity="0.5"/>
-      <stop offset="65%" stop-color="#F59E0B" stop-opacity="0.75"/>
-      <stop offset="88%" stop-color="#EF4444" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="#DC2626" stop-opacity="0.95"/>
+    <!-- Peak Von Mises Stress Gradient: Bending moment M=F*L increases towards ROOT -->
+    <!-- Top is low stress (cyan/blue), Middle is moderate, ROOT JUNCTION is peak RED (312 MPa) -->
+    <linearGradient id="stressGradPeak" x1="70%" y1="0%" x2="20%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7" stop-opacity="0.35"/>
+      <stop offset="35%" stop-color="#0EA5E9" stop-opacity="0.45"/>
+      <stop offset="65%" stop-color="#38BDF8" stop-opacity="0.6"/>
+      <stop offset="82%" stop-color="#F59E0B" stop-opacity="0.85"/>
+      <stop offset="92%" stop-color="#EF4444" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#DC2626" stop-opacity="1.0"/>
     </linearGradient>
+
+    <!-- Root Fillet Localized Re-entrant Corner Concentration Gradient -->
+    <radialGradient id="rootFilletGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#EF4444" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#F59E0B" stop-opacity="0.6"/>
+      <stop offset="80%" stop-color="#38BDF8" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0EA5E9" stop-opacity="0"/>
+    </radialGradient>
 
     <!-- Legend Bar Continuous Calibration Gradient -->
     <linearGradient id="legendGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -77,7 +87,7 @@
         }
       }
 
-      /* Cross-fading Stress Intensity (Nominal vs Peak Yield Stress) */
+      /* Cross-fading Stress Intensity (Nominal vs Peak Yield Stress at Root) */
       @keyframes stressTransition {
         0%, 100% {
           opacity: 0.1;
@@ -96,7 +106,7 @@
         }
       }
 
-      /* Stress Concentration Hotspot Pulsing */
+      /* Stress Concentration Hotspot Pulsing at Root Fillet */
       @keyframes hotspotHalo {
         0%, 100% {
           transform: scale(1);
@@ -104,7 +114,7 @@
           stroke: #38BDF8;
         }
         50% {
-          transform: scale(1.85);
+          transform: scale(1.9);
           stroke-opacity: 1;
           stroke: #EF4444;
         }
@@ -128,7 +138,7 @@
           transform: translateX(24px);
         }
         50% {
-          transform: translateX(116px);
+          transform: translateX(120px);
         }
       }
 
@@ -160,7 +170,7 @@
         animation: nominalFade 3.6s ease-in-out infinite;
       }
       .dyn-hotspot-halo {
-        transform-origin: 260px 190px;
+        transform-origin: 220px 248px;
         animation: hotspotHalo 3.6s ease-in-out infinite;
       }
       .dyn-callout-box {
@@ -223,15 +233,20 @@
       <text x="310" y="300" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8">FIXED (U=0)</text>
     </g>
 
-    <!-- 2. UPRIGHT WEB & STRESS CONCENTRATION ZONE (Undergoes elastic shear/bending) -->
+    <!-- 2. UPRIGHT WEB & CANTILEVER STRESS DISTRIBUTION -->
+    <!-- Bending moment increases from top (near pin) towards ROOT JUNCTION at bottom -->
     <g id="upright-web" class="dyn-rib">
       <!-- Layer A: Nominal Stress State (Cyan/Blue) -->
       <polygon points="220,130 300,90 300,210 220,250" fill="url(#stressGradNominal)" stroke="#38BDF8" stroke-width="1.5" class="dyn-stress-nom"/>
-      <!-- Layer B: Peak Von Mises Stress State (Surges into Critical Amber & Red under load) -->
+      
+      <!-- Layer B: Peak Stress State (Surges from Cyan at top into Critical RED at the ROOT) -->
       <polygon points="220,130 300,90 300,210 220,250" fill="url(#stressGradPeak)" stroke="#EF4444" stroke-width="1.8" class="dyn-stress-peak"/>
 
-      <!-- Rib Side Flange Profile -->
+      <!-- Rib Side Flange Profile (Bending tension on outer edge) -->
       <polygon points="180,150 220,130 220,250 180,270" fill="#0EA5E9" fill-opacity="0.22" stroke="#38BDF8" stroke-width="1.5"/>
+
+      <!-- Localized Peak Concentration Zone at the Root Fillet / Re-entrant Corner -->
+      <path d="M 200,240 L 220,225 L 250,240 L 220,255 Z" fill="url(#rootFilletGlow)" class="dyn-stress-peak"/>
 
       <!-- FEA Sub-element Discretization Grid on Web -->
       <line x1="220" y1="170" x2="300" y2="130" stroke="#38BDF8" stroke-width="1"/>
@@ -263,29 +278,37 @@
       </g>
     </g>
 
-    <!-- 4. CRITICAL FILLET STRESS HOTSPOT & DYNAMIC SENSOR CALLOUT -->
+    <!-- 4. ROOT FILLET STRESS CONCENTRATION & DYNAMIC SENSOR CALLOUT -->
+    <!-- Maximum bending moment and geometric notch concentration occur at the vertical plate ROOT -->
     <g id="stress-hotspot">
-      <!-- Fillet Concentration Node Point -->
-      <circle cx="260" cy="190" r="4.5" fill="#EF4444"/>
-      <!-- Pulsing Acoustic/Stress Halo -->
-      <circle cx="260" cy="190" r="10" stroke="#EF4444" stroke-width="1.2" stroke-dasharray="3 2" fill="none" class="dyn-hotspot-halo"/>
+      <!-- Root Fillet Radius Transition Arc -->
+      <path d="M 214 238 Q 220 248 228 252" stroke="#EF4444" stroke-width="2.5" fill="none" class="dyn-stress-peak"/>
+
+      <!-- Fillet Root Node Point (Maximum Bending & Notch Stress) -->
+      <circle cx="220" cy="248" r="4.5" fill="#EF4444"/>
+      <!-- Pulsing Stress Concentration Halo at Plate Root -->
+      <circle cx="220" cy="248" r="11" stroke="#EF4444" stroke-width="1.2" stroke-dasharray="3 2" fill="none" class="dyn-hotspot-halo"/>
       
-      <!-- Callout Leader Line -->
-      <line x1="260" y1="190" x2="365" y2="152" stroke="#EF4444" stroke-width="1.2"/>
-      <line x1="365" y1="152" x2="435" y2="152" stroke="#EF4444" stroke-width="1.2"/>
+      <!-- Root Fillet Notch Radius Dimension Annotation -->
+      <text x="135" y="244" fill="#FCA5A5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5" font-weight="600" class="dyn-stress-peak">ROOT FILLET R=5.0</text>
+      <line x1="188" y1="242" x2="216" y2="246" stroke="#EF4444" stroke-width="0.8" stroke-dasharray="2 1" class="dyn-stress-peak"/>
+
+      <!-- Callout Leader Line to Measurement Box -->
+      <line x1="220" y1="248" x2="350" y2="190" stroke="#EF4444" stroke-width="1.2"/>
+      <line x1="350" y1="190" x2="435" y2="190" stroke="#EF4444" stroke-width="1.2"/>
 
       <!-- Dynamic Callout Measurement Tag -->
-      <g transform="translate(438, 140)">
-        <rect x="0" y="0" width="138" height="26" rx="3" fill="#0F172A" stroke="#334155" stroke-width="1" class="dyn-callout-box"/>
-        <!-- Peak Yield Warning -->
+      <g transform="translate(438, 178)">
+        <rect x="0" y="0" width="162" height="26" rx="3" fill="#0F172A" stroke="#334155" stroke-width="1" class="dyn-callout-box"/>
+        <!-- Peak Root Yield Stress -->
         <g class="dyn-stress-peak">
-          <text x="8" y="17" fill="#EF4444" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="bold">&sigma;_max: 294 MPa</text>
-          <text x="104" y="17" fill="#FCA5A5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5">[YIELD]</text>
+          <text x="8" y="17" fill="#EF4444" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" font-weight="bold">&sigma;_max: 312 MPa</text>
+          <text x="110" y="17" fill="#FCA5A5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5">[ROOT YIELD]</text>
         </g>
         <!-- Nominal / Safe State -->
         <g class="dyn-stress-nom">
-          <text x="8" y="17" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="bold">&sigma;_nom: 78 MPa</text>
-          <text x="104" y="17" fill="#34D399" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5">[SAFE]</text>
+          <text x="8" y="17" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" font-weight="bold">&sigma;_nom: 74 MPa</text>
+          <text x="110" y="17" fill="#34D399" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5">[NOMINAL]</text>
         </g>
       </g>
     </g>
