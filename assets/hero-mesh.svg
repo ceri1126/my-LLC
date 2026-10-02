@@ -1,111 +1,328 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" fill="none">
   <defs>
     <!-- Stress distribution gradients -->
-    <linearGradient id="stressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0284C7" stop-opacity="0.3"/>
-      <stop offset="40%" stop-color="#0EA5E9" stop-opacity="0.4"/>
-      <stop offset="70%" stop-color="#EAB308" stop-opacity="0.5"/>
-      <stop offset="95%" stop-color="#EF4444" stop-opacity="0.6"/>
+    <!-- Nominal / Safe Stress Gradient (Blue/Cyan/Greenish) -->
+    <linearGradient id="stressGradNominal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#0EA5E9" stop-opacity="0.45"/>
+      <stop offset="85%" stop-color="#38BDF8" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#34D399" stop-opacity="0.55"/>
     </linearGradient>
-    <linearGradient id="gridGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.2"/>
-      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0.02"/>
+
+    <!-- Peak Von Mises Stress Gradient (Cyan -> Yellow -> High Alert Red) -->
+    <linearGradient id="stressGradPeak" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7" stop-opacity="0.4"/>
+      <stop offset="35%" stop-color="#0EA5E9" stop-opacity="0.5"/>
+      <stop offset="65%" stop-color="#F59E0B" stop-opacity="0.75"/>
+      <stop offset="88%" stop-color="#EF4444" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#DC2626" stop-opacity="0.95"/>
     </linearGradient>
+
+    <!-- Legend Bar Continuous Calibration Gradient -->
+    <linearGradient id="legendGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284C7"/>
+      <stop offset="30%" stop-color="#0EA5E9"/>
+      <stop offset="60%" stop-color="#EAB308"/>
+      <stop offset="85%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#EF4444"/>
+    </linearGradient>
+
+    <!-- Technical Drawing Grid Pattern -->
     <pattern id="isoGrid" width="40" height="40" patternUnits="userSpaceOnUse">
       <path d="M 40 0 L 0 40 M 0 0 L 40 40" stroke="#1E293B" stroke-width="0.75"/>
     </pattern>
+
+    <!-- Embedded Keyframe Animations -->
+    <style>
+      /* Harmonic Cyclic Loading Animation (3.6s cycle) */
+      @keyframes loadPulse {
+        0%, 100% {
+          transform: translateY(0);
+          opacity: 0.7;
+        }
+        50% {
+          transform: translateY(14px);
+          opacity: 1;
+        }
+      }
+
+      @keyframes loadArrowScale {
+        0%, 100% {
+          stroke: #38BDF8;
+          stroke-width: 2;
+        }
+        50% {
+          stroke: #EF4444;
+          stroke-width: 3.2;
+        }
+      }
+
+      /* Upper Lug & Bearing Hole Deflection (Exaggerated FEA bending mode) */
+      @keyframes lugDeflect {
+        0%, 100% {
+          transform: translate(0px, 0px) rotate(0deg);
+        }
+        50% {
+          transform: translate(2.5px, 13px) rotate(1.6deg);
+        }
+      }
+
+      /* Upright Rib / Structural Web Elastic Flexure */
+      @keyframes ribFlex {
+        0%, 100% {
+          transform: scale(1, 1) skewX(0deg);
+        }
+        50% {
+          transform: scale(1.01, 1.04) skewX(0.7deg);
+        }
+      }
+
+      /* Cross-fading Stress Intensity (Nominal vs Peak Yield Stress) */
+      @keyframes stressTransition {
+        0%, 100% {
+          opacity: 0.1;
+        }
+        50% {
+          opacity: 0.95;
+        }
+      }
+
+      @keyframes nominalFade {
+        0%, 100% {
+          opacity: 0.9;
+        }
+        50% {
+          opacity: 0.15;
+        }
+      }
+
+      /* Stress Concentration Hotspot Pulsing */
+      @keyframes hotspotHalo {
+        0%, 100% {
+          transform: scale(1);
+          stroke-opacity: 0.3;
+          stroke: #38BDF8;
+        }
+        50% {
+          transform: scale(1.85);
+          stroke-opacity: 1;
+          stroke: #EF4444;
+        }
+      }
+
+      /* Callout Box Status Switch */
+      @keyframes calloutBoxGlow {
+        0%, 100% {
+          stroke: #334155;
+          fill: #0F172A;
+        }
+        50% {
+          stroke: #EF4444;
+          fill: #221217;
+        }
+      }
+
+      /* Von Mises Dynamic Legend Needle Tracking */
+      @keyframes needleTrack {
+        0%, 100% {
+          transform: translateX(24px);
+        }
+        50% {
+          transform: translateX(116px);
+        }
+      }
+
+      /* Status Indicator Blinking */
+      @keyframes liveBlink {
+        0%, 100% { opacity: 0.35; }
+        50% { opacity: 1; }
+      }
+
+      /* Classes applied to SVG groups */
+      .dyn-load-group {
+        animation: loadPulse 3.6s ease-in-out infinite;
+      }
+      .dyn-arrow-line {
+        animation: loadArrowScale 3.6s ease-in-out infinite;
+      }
+      .dyn-lug {
+        transform-origin: 260px 190px;
+        animation: lugDeflect 3.6s ease-in-out infinite;
+      }
+      .dyn-rib {
+        transform-origin: 220px 250px;
+        animation: ribFlex 3.6s ease-in-out infinite;
+      }
+      .dyn-stress-peak {
+        animation: stressTransition 3.6s ease-in-out infinite;
+      }
+      .dyn-stress-nom {
+        animation: nominalFade 3.6s ease-in-out infinite;
+      }
+      .dyn-hotspot-halo {
+        transform-origin: 260px 190px;
+        animation: hotspotHalo 3.6s ease-in-out infinite;
+      }
+      .dyn-callout-box {
+        animation: calloutBoxGlow 3.6s ease-in-out infinite;
+      }
+      .dyn-needle {
+        animation: needleTrack 3.6s ease-in-out infinite;
+      }
+      .dyn-live-dot {
+        animation: liveBlink 1.8s ease-in-out infinite;
+      }
+    </style>
   </defs>
 
-  <!-- Technical grid background -->
+  <!-- Technical Canvas Background -->
   <rect width="640" height="480" fill="#0B1320" rx="8"/>
   <rect width="640" height="480" fill="url(#isoGrid)" opacity="0.6"/>
 
-  <!-- Technical Drawing Border & Corner Crosshairs -->
+  <!-- Technical Drawing Outer Border & Corner Coordinate Marks -->
   <rect x="16" y="16" width="608" height="448" stroke="#334155" stroke-width="1" stroke-dasharray="8 4" fill="none"/>
-  <!-- Corner ticks -->
   <path d="M 12 16 L 24 16 M 16 12 L 16 24" stroke="#64748B" stroke-width="1.5"/>
   <path d="M 616 16 L 628 16 M 624 12 L 624 24" stroke="#64748B" stroke-width="1.5"/>
   <path d="M 12 464 L 24 464 M 16 456 L 16 468" stroke="#64748B" stroke-width="1.5"/>
   <path d="M 616 464 L 628 464 M 624 456 L 624 468" stroke="#64748B" stroke-width="1.5"/>
 
   <!-- Technical Header in Diagram -->
-  <text x="32" y="44" fill="#94A3B8" font-family="monospace" font-size="11" letter-spacing="1">FEA STRUCTURAL EVALUATION // MODEL VALIDATION [REF-01]</text>
-  <text x="500" y="44" fill="#38BDF8" font-family="monospace" font-size="11">SCALE: 1:1 [NORM]</text>
+  <text x="32" y="44" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" letter-spacing="0.8">FEA STRUCTURAL EVALUATION // DYNAMIC CYCLIC DEFLECTION</text>
+  
+  <!-- Live Cycle Indicator Badge -->
+  <g transform="translate(485, 33)">
+    <circle cx="6" cy="7" r="3.5" fill="#10B981" class="dyn-live-dot"/>
+    <text x="16" y="11" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="600">AMP: 40X &middot; 0.28Hz</text>
+  </g>
   <line x1="32" y1="52" x2="608" y2="52" stroke="#1E293B" stroke-width="1"/>
 
-  <!-- Structural Bracket 3D Isometric Finite Element Mesh -->
+  <!-- Structural Assembly Model -->
   <g transform="translate(40, 20)">
-    <!-- Base Mounting Flange Elements -->
-    <polygon points="120,300 240,360 400,280 280,220" fill="#0F172A" stroke="#38BDF8" stroke-width="1.5"/>
-    <polygon points="120,300 120,320 240,380 240,360" fill="#090D16" stroke="#38BDF8" stroke-width="1.5"/>
-    <polygon points="240,360 240,380 400,300 400,280" fill="#141E33" stroke="#38BDF8" stroke-width="1.5"/>
+    
+    <!-- 1. BASE MOUNTING FLANGE (Rigid / Fully Constrained at Bolts) -->
+    <g id="rigid-base">
+      <polygon points="120,300 240,360 400,280 280,220" fill="#0F172A" stroke="#38BDF8" stroke-width="1.5"/>
+      <polygon points="120,300 120,320 240,380 240,360" fill="#090D16" stroke="#38BDF8" stroke-width="1.5"/>
+      <polygon points="240,360 240,380 400,300 400,280" fill="#141E33" stroke="#38BDF8" stroke-width="1.5"/>
 
-    <!-- Upright Rib / Structural Web Elements with FEA Stress Gradient -->
-    <polygon points="220,130 300,90 300,210 220,250" fill="url(#stressGrad)" stroke="#38BDF8" stroke-width="1.5"/>
-    <polygon points="180,150 220,130 220,250 180,270" fill="#0EA5E9" fill-opacity="0.25" stroke="#38BDF8" stroke-width="1.5"/>
+      <!-- Base Plate FEA Mesh Lines -->
+      <line x1="160" y1="320" x2="320" y2="240" stroke="#0284C7" stroke-width="1" stroke-dasharray="3 2"/>
+      <line x1="200" y1="340" x2="360" y2="260" stroke="#0284C7" stroke-width="1" stroke-dasharray="3 2"/>
+      <line x1="180" y1="270" x2="240" y2="360" stroke="#0284C7" stroke-width="1" stroke-dasharray="3 2"/>
+      <line x1="240" y1="240" x2="320" y2="320" stroke="#0284C7" stroke-width="1" stroke-dasharray="3 2"/>
 
-    <!-- Top Pin / Bearing Lug -->
-    <polygon points="220,130 260,110 300,130 260,150" fill="#1E293B" stroke="#38BDF8" stroke-width="1.5"/>
-    <ellipse cx="260" cy="130" rx="18" ry="10" fill="#0B1320" stroke="#F59E0B" stroke-width="1.5"/>
+      <!-- Boundary Condition: Fixed Constraint Symbols on Bolt Holes -->
+      <!-- Bolt 1 (Left) -->
+      <ellipse cx="170" cy="335" rx="10" ry="6" fill="#0B1320" stroke="#38BDF8" stroke-width="1.2"/>
+      <path d="M 165 343 L 175 343 M 167 346 L 173 346" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="145" y="360" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8">FIXED (U=0)</text>
 
-    <!-- Finite Element Mesh Discretization Lines -->
-    <!-- Base Plate Sub-elements -->
-    <line x1="160" y1="320" x2="320" y2="240" stroke="#0284C7" stroke-width="1" stroke-dasharray="3 2"/>
-    <line x1="200" y1="340" x2="360" y2="260" stroke="#0284C7" stroke-width="1" stroke-dasharray="3 2"/>
-    <line x1="180" y1="270" x2="240" y2="360" stroke="#0284C7" stroke-width="1" stroke-dasharray="3 2"/>
-    <line x1="240" y1="240" x2="320" y2="320" stroke="#0284C7" stroke-width="1" stroke-dasharray="3 2"/>
+      <!-- Bolt 2 (Right) -->
+      <ellipse cx="330" cy="275" rx="10" ry="6" fill="#0B1320" stroke="#38BDF8" stroke-width="1.2"/>
+      <path d="M 325 283 L 335 283 M 327 286 L 333 286" stroke="#94A3B8" stroke-width="1.2"/>
+      <text x="310" y="300" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8">FIXED (U=0)</text>
+    </g>
 
-    <!-- Upright Rib Sub-elements (High Stress Concentration Zone) -->
-    <line x1="220" y1="170" x2="300" y2="130" stroke="#38BDF8" stroke-width="1"/>
-    <line x1="220" y1="210" x2="300" y2="170" stroke="#38BDF8" stroke-width="1"/>
-    <line x1="260" y1="110" x2="260" y2="230" stroke="#38BDF8" stroke-width="1"/>
+    <!-- 2. UPRIGHT WEB & STRESS CONCENTRATION ZONE (Undergoes elastic shear/bending) -->
+    <g id="upright-web" class="dyn-rib">
+      <!-- Layer A: Nominal Stress State (Cyan/Blue) -->
+      <polygon points="220,130 300,90 300,210 220,250" fill="url(#stressGradNominal)" stroke="#38BDF8" stroke-width="1.5" class="dyn-stress-nom"/>
+      <!-- Layer B: Peak Von Mises Stress State (Surges into Critical Amber & Red under load) -->
+      <polygon points="220,130 300,90 300,210 220,250" fill="url(#stressGradPeak)" stroke="#EF4444" stroke-width="1.8" class="dyn-stress-peak"/>
 
-    <!-- High Stress Node Callout (Von Mises Peak) -->
-    <circle cx="260" cy="190" r="4" fill="#EF4444"/>
-    <circle cx="260" cy="190" r="10" stroke="#EF4444" stroke-width="1" stroke-dasharray="2 2"/>
-    <line x1="260" y1="190" x2="360" y2="150" stroke="#EF4444" stroke-width="1.25"/>
-    <line x1="360" y1="150" x2="440" y2="150" stroke="#EF4444" stroke-width="1.25"/>
-    <rect x="445" y="138" width="105" height="24" rx="3" fill="#1E293B" stroke="#EF4444" stroke-width="1"/>
-    <text x="453" y="154" fill="#FCA5A5" font-family="monospace" font-size="10" font-weight="bold">σ_max: CRITICAL</text>
+      <!-- Rib Side Flange Profile -->
+      <polygon points="180,150 220,130 220,250 180,270" fill="#0EA5E9" fill-opacity="0.22" stroke="#38BDF8" stroke-width="1.5"/>
 
-    <!-- Boundary Condition: Fixed Constraint Symbols on Bolt Holes -->
-    <!-- Bolt Hole 1 -->
-    <ellipse cx="170" cy="335" rx="10" ry="6" fill="#0B1320" stroke="#38BDF8" stroke-width="1.2"/>
-    <path d="M 165 343 L 175 343 M 167 346 L 173 346" stroke="#94A3B8" stroke-width="1.2"/>
-    <!-- Bolt Hole 2 -->
-    <ellipse cx="330" cy="275" rx="10" ry="6" fill="#0B1320" stroke="#38BDF8" stroke-width="1.2"/>
-    <path d="M 325 283 L 335 283 M 327 286 L 333 286" stroke="#94A3B8" stroke-width="1.2"/>
+      <!-- FEA Sub-element Discretization Grid on Web -->
+      <line x1="220" y1="170" x2="300" y2="130" stroke="#38BDF8" stroke-width="1"/>
+      <line x1="220" y1="210" x2="300" y2="170" stroke="#38BDF8" stroke-width="1"/>
+      <line x1="260" y1="110" x2="260" y2="230" stroke="#38BDF8" stroke-width="1"/>
+      <line x1="180" y1="190" x2="220" y2="170" stroke="#0284C7" stroke-width="0.8" stroke-dasharray="2 2"/>
+      <line x1="180" y1="230" x2="220" y2="210" stroke="#0284C7" stroke-width="0.8" stroke-dasharray="2 2"/>
+    </g>
 
-    <!-- Load Vector Arrow at Pin Hole -->
-    <path d="M 260 70 L 260 115" stroke="#F59E0B" stroke-width="2.5"/>
-    <polygon points="255,115 265,115 260,125" fill="#F59E0B"/>
-    <text x="270" y="85" fill="#FBBF24" font-family="monospace" font-size="11" font-weight="bold">F_ext: 12.5 kN</text>
+    <!-- 3. TOP BEARING LUG & PIN (Dynamic Deflection Node under cyclic load) -->
+    <g id="deflecting-lug" class="dyn-lug">
+      <!-- Upper Lug Head Geometry -->
+      <polygon points="220,130 260,110 300,130 260,150" fill="#1E293B" stroke="#38BDF8" stroke-width="1.5"/>
+      <!-- Pin Borehole -->
+      <ellipse cx="260" cy="130" rx="18" ry="10" fill="#0B1320" stroke="#F59E0B" stroke-width="1.8"/>
 
-    <!-- Mesh Nodes Points -->
+      <!-- Deflection Vector Ghost Guide (dashed arc showing displacement) -->
+      <path d="M 260 130 L 263 144" stroke="#F59E0B" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>
+
+      <!-- Dynamic Cyclic Load Vector Arrow (Pressing downward onto the pin) -->
+      <g class="dyn-load-group">
+        <path d="M 260 62 L 260 114" stroke="#F59E0B" stroke-width="2.5" class="dyn-arrow-line"/>
+        <polygon points="254,112 266,112 260,123" fill="#F59E0B"/>
+        
+        <!-- Live Load Readout Tag -->
+        <rect x="272" y="70" width="108" height="20" rx="2" fill="#0B1320" stroke="#F59E0B" stroke-width="1"/>
+        <text x="278" y="84" fill="#FBBF24" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" font-weight="bold" class="dyn-stress-peak">F: 12.5 kN [MAX]</text>
+        <text x="278" y="84" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" font-weight="bold" class="dyn-stress-nom">F: 2.1 kN [IDLE]</text>
+      </g>
+    </g>
+
+    <!-- 4. CRITICAL FILLET STRESS HOTSPOT & DYNAMIC SENSOR CALLOUT -->
+    <g id="stress-hotspot">
+      <!-- Fillet Concentration Node Point -->
+      <circle cx="260" cy="190" r="4.5" fill="#EF4444"/>
+      <!-- Pulsing Acoustic/Stress Halo -->
+      <circle cx="260" cy="190" r="10" stroke="#EF4444" stroke-width="1.2" stroke-dasharray="3 2" fill="none" class="dyn-hotspot-halo"/>
+      
+      <!-- Callout Leader Line -->
+      <line x1="260" y1="190" x2="365" y2="152" stroke="#EF4444" stroke-width="1.2"/>
+      <line x1="365" y1="152" x2="435" y2="152" stroke="#EF4444" stroke-width="1.2"/>
+
+      <!-- Dynamic Callout Measurement Tag -->
+      <g transform="translate(438, 140)">
+        <rect x="0" y="0" width="138" height="26" rx="3" fill="#0F172A" stroke="#334155" stroke-width="1" class="dyn-callout-box"/>
+        <!-- Peak Yield Warning -->
+        <g class="dyn-stress-peak">
+          <text x="8" y="17" fill="#EF4444" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="bold">&sigma;_max: 294 MPa</text>
+          <text x="104" y="17" fill="#FCA5A5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5">[YIELD]</text>
+        </g>
+        <!-- Nominal / Safe State -->
+        <g class="dyn-stress-nom">
+          <text x="8" y="17" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" font-weight="bold">&sigma;_nom: 78 MPa</text>
+          <text x="104" y="17" fill="#34D399" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5">[SAFE]</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Structural Nodes Mesh Points -->
     <circle cx="120" cy="300" r="2.5" fill="#38BDF8"/>
     <circle cx="240" cy="360" r="2.5" fill="#38BDF8"/>
     <circle cx="400" cy="280" r="2.5" fill="#38BDF8"/>
     <circle cx="280" cy="220" r="2.5" fill="#38BDF8"/>
-    <circle cx="220" cy="130" r="2.5" fill="#38BDF8"/>
-    <circle cx="300" cy="90" r="2.5" fill="#38BDF8"/>
     <circle cx="220" cy="250" r="2.5" fill="#38BDF8"/>
     <circle cx="300" cy="210" r="2.5" fill="#38BDF8"/>
   </g>
 
-  <!-- Technical Calibration / Contour Bar (Bottom Right) -->
+  <!-- 5. REAL-TIME VON MISES CONTOUR CALIBRATION BAR (Bottom Right) -->
   <g transform="translate(460, 360)">
-    <text x="0" y="-8" fill="#94A3B8" font-family="monospace" font-size="9.5">VON MISES [MPa]</text>
-    <rect x="0" y="0" width="130" height="12" fill="url(#stressGrad)" stroke="#334155" stroke-width="1"/>
-    <text x="0" y="24" fill="#64748B" font-family="monospace" font-size="8.5">0.0</text>
-    <text x="45" y="24" fill="#64748B" font-family="monospace" font-size="8.5">140</text>
-    <text x="105" y="24" fill="#EF4444" font-family="monospace" font-size="8.5">280+</text>
+    <text x="0" y="-8" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" letter-spacing="0.5">VON MISES [MPa]</text>
+    
+    <!-- Gradient Bar -->
+    <rect x="0" y="0" width="130" height="12" fill="url(#legendGrad)" stroke="#334155" stroke-width="1"/>
+    
+    <!-- Scale Ticks -->
+    <text x="0" y="24" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5">0.0</text>
+    <text x="45" y="24" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5">140</text>
+    <text x="105" y="24" fill="#EF4444" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5">280+</text>
+
+    <!-- Real-time Sliding Indicator Needle -->
+    <g class="dyn-needle">
+      <polygon points="0,-2 -4,-7 4,-7" fill="#FFFFFF"/>
+      <line x1="0" y1="-2" x2="0" y2="14" stroke="#FFFFFF" stroke-width="1.8"/>
+    </g>
   </g>
 
-  <!-- Technical Parameters Box (Bottom Left) -->
-  <g transform="translate(32, 380)">
-    <rect x="0" y="0" width="220" height="58" rx="4" fill="#090D16" stroke="#1E293B" stroke-width="1"/>
-    <text x="12" y="16" fill="#38BDF8" font-family="monospace" font-size="9">ELEMENT TYPE: C3D8R / HEX8</text>
-    <text x="12" y="32" fill="#94A3B8" font-family="monospace" font-size="9">NONLINEAR CONTACT: ENFORCED</text>
-    <text x="12" y="48" fill="#94A3B8" font-family="monospace" font-size="9">CONVERGENCE: FULL NEWTON-RAPHSON</text>
+  <!-- 6. NUMERICAL SIMULATION PARAMETERS PANEL (Bottom Left) -->
+  <g transform="translate(32, 375)">
+    <rect x="0" y="0" width="230" height="64" rx="4" fill="#090D16" stroke="#1E293B" stroke-width="1"/>
+    <text x="12" y="17" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9">SOLVER: NONLINEAR IMPLICIT</text>
+    <text x="12" y="33" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9">ELEMENT: C3D8R (REDUCED INT.)</text>
+    <text x="12" y="49" fill="#10B981" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9">CONVERGENCE: RESIDUAL &lt; 10&#8315;&#8308;</text>
   </g>
 </svg>
